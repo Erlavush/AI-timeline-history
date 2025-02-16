@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<!-- Earl Josh Delgado | Artificial Intelligence | BSCS 2A-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>History Timeline of AI</title>
+  <!-- Fira Code Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
+  <!-- Font Awesome Icons (CDN) -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    integrity="sha512-..."
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+
+  <style>
+    :root {
+      --primary-color: #f08fff;
+      --bg-color: #000000;
+      --card-bg: #5d2d7a;
+      --card-border: #f08fff;
+      --card-title-color: #ffdfff;
+      --text-color: #f0f0f0;
+    }
+    
+    /* Basic Reset */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    html {
+      scroll-behavior: smooth;
+    }
+    
+    /* Starfield Background Canvas */
+    #starCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1; /* Place behind everything */
+      display: block;
+    }
+    
+    body {
+      background: var(--bg-color);
+      font-family: 'Fira Code', monospace;
+      color: #fff;
+      min-height: 100vh;
+      margin: 0;
+      overflow-x: hidden;
+      position: relative;
+    }
+    
+    /* Center the main title at the top */
+    h1 {
+      margin: 20px auto 10px auto; /* top, auto-left, bottom, auto-right */
+      text-align: center;
+      color: var(--primary-color);
+      font-size: 2.5rem; /* Increased font size */
+      border-bottom: 2px solid var(--primary-color);
+      width: fit-content; /* shrink-wraps the heading and its border */
+      z-index: 3;
+    }
+    
+    /* Timeline Container */
+    .timeline-container {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 40px 20px;
+      z-index: 3;
+    }
+    
+    /* SVG Connector for timeline arrows */
+    .connector-svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: visible;
+      z-index: 2;
+    }
+    
+    /* Timeline Event Cards */
+    .timeline-event {
+      position: relative;
+      width: 300px;
+      margin: 100px auto;
+      padding: 20px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      box-shadow: 0 0 4px var(--primary-color), 0 0 8px var(--primary-color);
+      animation: pulseGlow 3s infinite alternate, fadeIn 0.5s ease forwards;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      z-index: 3;
+      transform: translateX(var(--offset, 0));
+    }
+    
+    @keyframes pulseGlow {
+      0% { box-shadow: 0 0 4px var(--primary-color), 0 0 8px var(--primary-color); }
+      50% { box-shadow: 0 0 6px var(--primary-color), 0 0 12px var(--primary-color); }
+      100% { box-shadow: 0 0 4px var(--primary-color), 0 0 8px var(--primary-color); }
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    /* Horizontal offsets for timeline events */
+    .offset-left { --offset: -250px; }
+    .offset-right { --offset: 100px; }
+    
+    .timeline-event:hover {
+      transform: translateX(var(--offset, 0)) scale(1.05);
+      box-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--primary-color);
+      animation-play-state: paused;
+    }
+    
+    /* Timeline Year Styling */
+    .timeline-event h2 {
+      color: white;
+      font-size: 1.8rem;
+      margin-bottom: 6px;
+      font-weight: bold;
+      text-align: center;
+      text-shadow: 
+        -1px -1px 0 #000,
+         1px -1px 0 #000,
+        -1px  1px 0 #000,
+         1px  1px 0 #000,
+        -2px 0 0 #000,
+         2px 0 0 #000,
+         0 -2px 0 #000,
+         0 2px 0 #000;
+    }
+    
+    .timeline-event p {
+      font-size: 0.9rem;
+      line-height: 1.4;
+      color: var(--text-color);
+    }
+    
+    /* Image styling within timeline cards */
+    .timeline-event img {
+      width: 100%;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .timeline-event img:hover {
+      transform: scale(1.02);
+      box-shadow: 0 0 8px var(--primary-color);
+    }
+    
+    /* Neon Connector Paths */
+    .connector-path {
+      stroke: var(--primary-color);
+      stroke-width: 2;
+      fill: none;
+      filter: drop-shadow(0 0 2px var(--primary-color));
+      animation: pulseNeon 3s infinite alternate;
+    }
+    
+    @keyframes pulseNeon {
+      0% { filter: drop-shadow(0 0 2px var(--primary-color)); }
+      50% { filter: drop-shadow(0 0 4px var(--primary-color)); }
+      100% { filter: drop-shadow(0 0 2px var(--primary-color)); }
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 480px) {
+      .offset-left, .offset-right {
+        transform: none;
+      }
+    }
+    
+    /* Footer Styling */
+    footer {
+      background: #111;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+      margin-top: 40px;
+      z-index: 3;
+      position: relative;
+    }
+    
+    footer p { margin-bottom: 10px; }
+    
+    footer .social-links a {
+      color: var(--primary-color);
+      margin: 0 10px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s ease;
+      font-size: 1.2rem;
+    }
+    
+    footer .social-links a:hover { color: #fff; }
+    
+    /* --- Bouncing & Rotating Among Us Characters --- */
+    .among-us {
+      position: fixed;
+      width: 80px;
+      height: 80px;
+      background-size: contain;
+      background-repeat: no-repeat;
+      z-index: 1; /* behind timeline (z-index 3) but above starfield (z-index -1) */
+    }
+  </style>
+</head>
+<body>
+  <!-- Starfield Background Canvas -->
+  <canvas id="starCanvas"></canvas>
+  
+  <!-- Among Us Characters -->
+  <div class="among-us" style="background-image: url('https://user-images.githubusercontent.com/12670730/113008567-6ebdcb80-9177-11eb-91bd-6863196d9cd3.png');"></div>
+  <div class="among-us" style="background-image: url('https://cdn131.picsart.com/343641464018211.png');"></div>
+  <div class="among-us" style="background-image: url('https://i.pinimg.com/originals/49/e1/1b/49e11ba5a4ccf2c7d128d9e2c3751736.png');"></div>
+  <div class="among-us" style="background-image: url('https://steamuserimages-a.akamaihd.net/ugc/1697282850188720257/CA172D1B1B8561C7B37BAB8510D1252CB720AF34/?imw=512');"></div>
+  <div class="among-us" style="background-image: url('https://static.wikia.nocookie.net/fc51f706-7f8c-4f17-a65e-afb2e13a57a7/scale-to-width/755');"></div>
+  <div class="among-us" style="background-image: url('https://i.pinimg.com/originals/2e/07/9f/2e079fc12cdfc36e03e9be4145e5cf4b.png');"></div>
+  <div class="among-us" style="background-image: url('https://avatars.dzeninfra.ru/get-zen_doc/1592246/pub_5fc097d0a9416d5dd796f30c_5fc099b8b1f92632baacda36/scale_1200');"></div>
+  <!-- Main Title (centered) -->
+  <h1>History Timeline of AI</h1>
+  
+  <!-- Timeline Container & SVG for Neon Connectors -->
+  <div class="timeline-container" id="timelineContainer">
+    <svg class="connector-svg" id="connectorSvg">
+      <defs>
+        <marker id="arrowhead-downright" viewBox="0 0 12 12" refX="10" refY="2.5" markerWidth="12" markerHeight="12" orient="auto-start-reverse">
+          <path d="M 0 1 L 12 6 L 0 11 L 4 6 Z" fill="var(--primary-color)" transform="rotate(-45, 6, 6)" />
+        </marker>
+        <marker id="arrowhead-downleft" viewBox="0 0 12 12" refX="10" refY="9.8" markerWidth="12" markerHeight="12" orient="auto-start-reverse">
+          <path d="M 0 1 L 12 6 L 0 11 L 4 6 Z" fill="var(--primary-color)" transform="rotate(45, 6, 6)" />
+        </marker>
+      </defs>
+    </svg>
+  </div>
+  
+  <!-- Timeline Event Cards (generated dynamically) -->
+  <script>
+    // Timeline data
+    const timelineData = [
+    {
+      year: "1837",
+      description: "Charles Babbage designs the Analytical Engine, the first general-purpose computer concept capable of executing programmed instructions.",
+      image: "https://www.ktopoverit.ru/images/news/tsifra1.png"
+    },
+    {
+      year: "1843",
+      description: "Ada Lovelace writes the first algorithm intended for machine processing, becoming the world's first computer programmer.",
+      image: "https://avatars.dzeninfra.ru/get-zen_doc/4723473/pub_6090f31db8e935293ce2a3b9_6090f3ac481f3e20cd550fc7/scale_1200"
+    },
+    {
+      year: "1936",
+      description: "Alan Turing introduces the concept of a universal machine, providing a formal foundation for computability and algorithms.",
+      image: "https://bibliotecapleyades.net/imagenes_ciencia5/ai03_05.jpg"
+    },
+    {
+      year: "1943",
+      description: "Warren McCulloch and Walter Pitts create the first mathematical model of a neural network.",
+      image: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh9wO17oF6ndZVYRhXR9MgRm0Rlvvcuws6Jhdmn_m1eOOQXX1DHAb0zHD8nF2wa2NVa_vs5IwiYNLgMcHTmY1vo0bcpQUepOYbwURgq-LI5ZoNoOcPDcTGz65cylAJW3_z9-colRw/s0/Mccullochpitts.jpeg"
+    },
+    {
+      year: "1950",
+      description: "Alan Turing publishes 'Computing Machinery and Intelligence,' proposing the Turing Test as a measure of machine intelligence.",
+      image: "https://www.if24.ru/wp-content/uploads/2018/06/1-1.jpg"
+    },
+    {
+      year: "1956",
+      description: "Dartmouth Workshop: The term 'AI' is coined, marking the official birth of AI as a research discipline.",
+      image: "https://assets.rebelmouse.io/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHBpcmVzX2F0IjoxNzQwMjczNzgyLCJpbWFnZSI6Imh0dHBzOi8vYXNzZXRzLnJibC5tcy8zMzYwMzcyOS9vcmlnaW4uanBnIn0.FfIXaUZhJNjtKidQCpCmE7dWMSP6tejUuCDFEoYqRLw/img.jpg"
+    },
+    {
+      year: "1958",
+      description: "John McCarthy develops LISP, a programming language fundamental to AI research due to its symbolic reasoning capabilities.",
+      image: "https://avatars.mds.yandex.net/i?id=5d97dc88e0733a50c756661768d5c756_l-10914274-images-thumbs&n=13"
+    },
+    {
+      year: "1965",
+      description: "Joseph Weizenbaum creates ELIZA, an early natural language program simulating human conversation.",
+      image: "https://i0.wp.com/hipertextual.com/wp-content/uploads/2011/12/W_weizenbaum.jpg?fit=1600%2C1067&ssl=1"
+    },
+    {
+      year: "1969",
+      description: "Minsky and Papert publish 'Perceptrons', influencing neural network research.",
+      image: "https://miro.medium.com/v2/resize:fit:1400/1*DsWkLnk_0APeaExD8bvsGg.png"
+    },
+    {
+      year: "1980s",
+      description: "Expert systems like MYCIN demonstrate AI's decision-making in medicine and other fields.",
+      image: "https://i.ytimg.com/vi/ipEOjuV0vns/hqdefault.jpg"
+    },
+    {
+      year: "1986",
+      description: "Backpropagation algorithm popularized, revolutionizing neural network training.",
+      image: "https://avatars.dzeninfra.ru/get-zen_doc/8251857/pub_6408e448d4e137214ad7d883_6408e53b9e7a1906dc856865/scale_1200"
+    },
+    {
+      year: "1997",
+      description: "IBM's Deep Blue defeats world chess champion Garry Kasparov, marking a milestone in AI's strategic prowess.",
+      image: "https://images.chesscomfiles.com/uploads/v1/images_users/tiny_mce/PennywiseITPennywise/php2alPMo.png"
+    },
+    {
+      year: "2012",
+      description: "AlexNet wins the ImageNet competition, igniting a deep learning revolution in computer vision.",
+      image: "https://user-images.githubusercontent.com/22200326/28600444-43e89bbc-71b2-11e7-9152-db7b5cc999fb.png"
+    },
+    {
+      year: "2014",
+      description: "Google acquires DeepMind; AlphaGo later achieves breakthrough victories (2016).",
+      image: "https://image.cnbcfm.com/api/v1/image/103453536-GettyImages-514242500.jpg?v=1529470903&w=1600&h=900"
+    },
+    {
+      year: "2017",
+      description: "Transformer architecture introduced, enabling major advances in NLP.",
+      image: "https://daxg39y63pxwu.cloudfront.net/images/blog/transformers-architecture/Components_of_Transformer_Architecture.png"
+    },
+    {
+      year: "2022",
+      description: "OpenAI launches ChatGPT, captivating the world with its human-like conversational capabilities.",
+      image: "https://avatars.dzeninfra.ru/get-zen_doc/271828/pub_6558968bc33c8446f3484ef3_6558968ec33c8446f3484f5a/scale_1200"
+    },
+    {
+      year: "2023",
+      description: "Generative AI tools like DALL-E , Midjourney and Stable Diffusion bring AI to creative domains.",
+      image: "https://lh4.googleusercontent.com/SuSo9hEdt56rvGS7GUxR1Cdn6v_9ceu8-ul5w_xLODESHG-AKhMiaFsR4fqzuUFepREdcqHeUILUS0PSjRCfF3ETHpUgHwu2Js-74E_BHRlmFPPiA0oJct1ztsf7qkFWeJ-vuMSoszkXmDydTIIR_7_Q2Iz8Xb8xSDhaeZDoIkbyxAKIRlRCW891Teuc4w"
+    }
+  ];
+  
+    
+    const container = document.getElementById('timelineContainer');
+    let side = 'left';
+    
+    timelineData.forEach((item, index) => {
+      const card = document.createElement('div');
+      card.classList.add('timeline-event');
+      card.classList.add(side === 'left' ? 'offset-left' : 'offset-right');
+      side = side === 'left' ? 'right' : 'left';
+      
+      card.innerHTML = `
+        <img src="${item.image}" alt="${item.year}">
+        <h2>${item.year}</h2>
+        <p>${item.description}</p>
+      `;
+      card.id = `event-${index}`;
+      container.appendChild(card);
+    });
+  </script>
+  
+  <!-- Footer Section -->
+  <footer>
+    <p>Earl Josh Delgado | Artificial Intelligence</p>
+    <div class="social-links">
+      <a href="https://web.facebook.com/Prince.Earl.04/" target="_blank"><i class="fab fa-facebook-f"></i></a>
+      <a href="https://github.com/Erlavush" target="_blank"><i class="fab fa-github"></i></a>
+      <a href="https://www.linkedin.com/in/earljoshdelgado0404/" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+    </div>
+  </footer>
+  
+  <!-- JavaScript for Starfield, Connectors, and Bouncing/Rotating Among Us Characters -->
+  <script>
+    /*******************************************************
+     * A) STARFIELD WITH MOUSE PARALLAX
+     *******************************************************/
+    const starCanvas = document.getElementById('starCanvas');
+    const ctx = starCanvas.getContext('2d');
+    let stars = [];
+    const starCount = 150;
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    const parallaxFactor = 0.02;
+    
+    function resizeCanvas() {
+      starCanvas.width = window.innerWidth;
+      starCanvas.height = window.innerHeight;
+      initStars();
+    }
+    
+    function initStars() {
+      stars = [];
+      for (let i = 0; i < starCount; i++) {
+        stars.push({
+          x: Math.random() * starCanvas.width,
+          y: Math.random() * starCanvas.height,
+          radius: 0.5 + Math.random() * 1.5
+        });
+      }
+    }
+    
+    function drawStars() {
+      ctx.clearRect(0, 0, starCanvas.width, starCanvas.height);
+      const offsetX = (mouseX - starCanvas.width / 2) * parallaxFactor;
+      const offsetY = (mouseY - starCanvas.height / 2) * parallaxFactor;
+      stars.forEach(star => {
+        ctx.beginPath();
+        ctx.arc(star.x + offsetX, star.y + offsetY, star.radius, 0, 2 * Math.PI);
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
+      });
+    }
+    
+    function animateStars() {
+      drawStars();
+      requestAnimationFrame(animateStars);
+    }
+    
+    window.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+    
+    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('load', () => {
+      resizeCanvas();
+      animateStars();
+      drawConnectors();
+      startAmongUsAnimation();
+    });
+    
+    /*******************************************************
+     * B) NEON CONNECTORS BETWEEN TIMELINE EVENTS
+     *******************************************************/
+    const svg = document.getElementById('connectorSvg');
+    const timelineEvents = document.querySelectorAll('.timeline-event');
+    
+    function drawConnectors() {
+      const defs = svg.querySelector('defs');
+      svg.innerHTML = '';
+      svg.appendChild(defs);
+      
+      const containerRect = document.getElementById('timelineContainer').getBoundingClientRect();
+      
+      for (let i = 0; i < timelineEvents.length - 1; i++) {
+        const current = timelineEvents[i].getBoundingClientRect();
+        const next = timelineEvents[i + 1].getBoundingClientRect();
+        const x1 = current.left + current.width / 2 - containerRect.left;
+        const y1 = current.top + current.height - containerRect.top;
+        const x2 = next.left + next.width / 2 - containerRect.left;
+        const y2 = next.top - containerRect.top;
+        const dy = y2 - y1;
+        const cx1 = x1;
+        const cy1 = y1 + dy * 0.4;
+        const cx2 = x2;
+        const cy2 = y2 - dy * 0.4;
+        
+        const pathData = `M ${x1},${y1} C ${cx1},${cy1} ${cx2},${cy2} ${x2},${y2}`;
+        const pathEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        pathEl.setAttribute('d', pathData);
+        pathEl.setAttribute('class', 'connector-path');
+        const arrowheadId = i % 2 === 0 ? 'arrowhead-downright' : 'arrowhead-downleft';
+        pathEl.setAttribute('marker-end', `url(#${arrowheadId})`);
+        svg.appendChild(pathEl);
+      }
+    }
+    
+    /*******************************************************
+     * C) BOUNCING & ROTATING AMONG US CHARACTERS
+     *******************************************************/
+    // Select all .among-us elements and map each to an object to store its state.
+    const amongUsElements = document.querySelectorAll('.among-us');
+    const characters = Array.from(amongUsElements).map(el => ({
+      el,
+      posX: Math.random() * (window.innerWidth - 80),
+      posY: Math.random() * (window.innerHeight - 80),
+      // Randomize initial velocity direction
+      velocityX: (Math.random() < 0.5 ? 1 : -1) * 0.3,
+      velocityY: (Math.random() < 0.5 ? 1 : -1) * 0.2,
+      // Random initial rotation to avoid synchronized spinning
+      rotation: Math.random() * 360
+    }));
+    
+    function startAmongUsAnimation() {
+      function animate() {
+        characters.forEach(character => {
+          character.posX += character.velocityX;
+          character.posY += character.velocityY;
+          
+          // Bounce horizontally
+          if (character.posX <= 0 || character.posX >= window.innerWidth - 80) {
+            character.velocityX = -character.velocityX;
+            character.posX = Math.max(0, Math.min(character.posX, window.innerWidth - 80));
+          }
+          // Bounce vertically
+          if (character.posY <= 0 || character.posY >= window.innerHeight - 80) {
+            character.velocityY = -character.velocityY;
+            character.posY = Math.max(0, Math.min(character.posY, window.innerHeight - 80));
+          }
+          
+          // Increment rotation slowly
+          character.rotation = (character.rotation + 0.3) % 360;
+          character.el.style.transform = `translate(${character.posX}px, ${character.posY}px) rotate(${character.rotation}deg)`;
+        });
+        requestAnimationFrame(animate);
+      }
+      animate();
+    }
+    
+    window.addEventListener("resize", () => {
+      characters.forEach(character => {
+        character.posX = Math.min(character.posX, window.innerWidth - 80);
+        character.posY = Math.min(character.posY, window.innerHeight - 80);
+      });
+    });
+  </script>
+</body>
+</html>
