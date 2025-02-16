@@ -11,3 +11,5 @@ Just a webpage for the AI course that visualizes the timeline history of Artifia
 
  Using only HTML, CSS, and JS.
 
+
+view live deployment: https://erudesu-ai-timeline.netlify.app/
